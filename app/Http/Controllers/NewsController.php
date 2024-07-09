@@ -5,111 +5,80 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\News;
 use App\Models\Category;
+use Illuminate\Support\Str;
 
 class NewsController extends Controller
 {
-    //Admin
-
-    // Show News
-    public function adminIndex()
+    public function index()
     {
         $news = News::all();
-        return view('adminNews.index', compact('news'));
+
+        return response()->json($news);
     }
 
-    // Show Form Add News
     public function create()
     {
-        $categories = Category::all();
-        return view('news.create', compact('categories'));
+        // Return view for creating news (if using views)
     }
 
-    // Add News
     public function store(Request $request)
     {
-        // Validate Data
         $request->validate([
-            'news_title' => 'required|string|max:255',
-            'news_content' => 'required|string',
-            'news_tag' => 'required|string|max:255',
-            'news_slug' => 'required|string|max:255|unique:news',
-            'category_id' => 'required|integer|exists:categories,id',
+            'title' => 'required|max:255',
+            'news' => 'required',
+            'id_category' => 'required|exists:categories,id_category',
+            'tag' => 'required|max:255',
         ]);
 
-        News::create([
-            'news_title' => $request->title,
-            'news_content' => $request->content,
-            'news_tag' => $request->tag,
-            'news_slug' => $request->slug,
-            'category_id' => $request->category_id,
+        $slug = Str::slug($request->title);
+        
+        $news = News::create([
+            'title' => $request->title,
+            'news' => $request->news,
+            'id_category' => $request->id_category,
+            'tag' => $request->tag,
+            'slug' => $slug,
         ]);
 
-        return redirect()->route('admin.news.index');
+        return response()->json($news, 201);
     }
 
-    // Show Form Edit News by ID
     public function edit($id)
     {
         $news = News::findOrFail($id);
-        $categories = Category::all();
-        return view('news.edit', compact('news', 'categories'));
+
+        return response()->json($news);
     }
 
-    // Update News by ID
     public function update(Request $request, $id)
     {
-        // Validate Data
-        $request->validate([
-            'news_title' => 'required|string|max:255',
-            'news_content' => 'required|string',
-            'news_tag' => 'required|string|max:255',
-            'news_slug' => 'required|string|max:255|unique:news',
-            'category_id' => 'required|integer|exists:categories,id',
-        ]);
-
         $news = News::findOrFail($id);
-        $news->update([
-            'news_title' => $request->title,
-            'news_content' => $request->content,
-            'news_tag' => $request->tag,
-            'news_slug' => $request->slug,
-            'category_id' => $request->category_id,
+
+        $request->validate([
+            'title' => 'required|max:255',
+            'news' => 'required',
+            'id_category' => 'required|exists:categories,id_category',
+            'tag' => 'required|max:255',
         ]);
 
-        return redirect()->route('admin.news.index');
+        $slug = Str::slug($request->title);
+
+        $news->update([
+            'title' => $request->title,
+            'news' => $request->news,
+            'id_category' => $request->id_category,
+            'tag' => $request->tag,
+            'slug' => $slug,
+        ]);
+
+        return response()->json($news, 200);
     }
 
-    // Delete News by ID
     public function destroy($id)
     {
         $news = News::findOrFail($id);
         $news->delete();
 
-        return redirect()->route('admin.news.index');
+        return response()->json(null, 204);
     }
-
-    // User
-
-    // Show News
-    public function userIndex()
-    {
-        $news = News::all();
-        return view('userNews.index', compact('news'));
-    }
-
-    // Show Detail News by ID
-    public function show($id)
-    {
-        $news = News::findOrFail($id);
-        return view('user.news.show', compact('news'));
-    }
-
-    // Show News in Specific Tag
-    public function searchByTag(Request $request)
-    {
-        $tag = $request->input('tag');
-        $news = News::where('tag', 'LIKE', "%{$tag}%")->get();
-        return view('user.news.index', compact('news'));
-    }
-
 }

@@ -4,85 +4,65 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Models\News;
 
 class CategoryController extends Controller
 {
-    // Admin
-
-    // Show Categories
     public function index()
     {
         $categories = Category::all();
-        return view('categories.index', compact('categories'));
+
+        return response()->json($categories);
     }
 
-    // Show Form Add Categories
     public function create()
     {
-        return view('categories.create');
+        // Return view for creating category (if using views)
     }
 
-    // Add Categories
     public function store(Request $request)
     {
-        // Validate Data
         $request->validate([
-            'category' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories',
+            'category' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories,slug',
         ]);
 
-        Category::create([
+        $category = Category::create([
             'category' => $request->category,
             'slug' => $request->slug,
         ]);
 
-        return redirect()->route('admin.categories.index');
+        return response()->json($category, 201);
     }
 
-    // Show Form Update Categories by ID
     public function edit($id)
     {
         $category = Category::findOrFail($id);
-        return view('categories.edit', compact('category'));
+
+        return response()->json($category);
     }
 
-    // Update Categories by ID
     public function update(Request $request, $id)
     {
-        // Validate Data
-        $request->validate([
-            'category' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
-        ]);
-
         $category = Category::findOrFail($id);
+
+        $request->validate([
+            'category' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories,slug,' . $category->id,
+        ]);
 
         $category->update([
             'category' => $request->category,
             'slug' => $request->slug,
         ]);
 
-        return redirect()->route('admin.categories.index');
+        return response()->json($category, 200);
     }
 
-    // Delete Categories by ID
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('admin.categories.index');
-    }
-
-    // User
-
-    // Show News in Specific Category
-    public function showNews($id)
-    {
-        $category = Category::findOrFail($id);
-        $news = $category->news;
-
-        return view('categories.news', compact('category', 'news'));
+        return response()->json(null, 204);
     }
 }

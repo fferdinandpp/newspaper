@@ -5,103 +5,56 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Admin Authentication
-
-    // Show Form Login
-    public function adminLoginForm()
-    {
-        return view('auth.admin.login');
-    }
-
-    // Login
-    public function adminLogin(Request $request)
-    {
-        $credentials = $request->only('admin_email', 'admin_password');
-
-        if (Auth::attempt($credentials) && Auth::user()->role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
-        }
-
-        return back()->withErrors('The provided credentials do not match our records.');
-    }
-
-    // Logout
-    public function adminLogout()
-    {
-        Auth::logout();
-        return redirect()->route('admin.login');
-    }
-
-    // User Management 
-    
-    // Show Users
-    public function adminIndex()
-    {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
-    }
-
-    // Delete User
-    public function adminDestroy($id)
-    {
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return redirect()->route('admin.users.index');
-    }
-
-    // User Authentication
-
-    // Show Form Register
-    public function userRegisterForm()
-    {
-        return view('auth.user.register');
-    }
-
-    // Register
-    public function userRegister(Request $request)
+    public function register(Request $request)
     {
         $request->validate([
-            'user_name' => 'required|string|max:255',
-            'user_email' => 'required|string|email|max:255|unique:users',
-            'user_password' => 'required|string|min:8|confirmed',
+            'name' => 'required|max:50',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
         ]);
 
-        User::create([
-            'user_name' => $request->user_name,
-            'user_email' => $request->user_email,
-            'user_password' => bcrypt($request->user_password),
-            'user_role' => 'user',
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('user.login');
+        return response()->json($user, 201);
     }
 
-    // Show Form Login
-    public function userLoginForm()
+    public function login(Request $request)
     {
-        return view('auth.user.login');
-    }
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    // Login
-    public function userLogin(Request $request)
-    {
-        $credentials = $request->only('user_email', 'user_password');
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        if (Auth::attempt($credentials && Auth::user()->role === 'user')) {
-            return redirect()->intended('/');
+            return response()->json(Auth::user());
         }
 
-        return back()->withErrors('The provided credentials do not match our records.');
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    // Logout
-    public function userLogout()
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('user.login');
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logged out successfully']);
     }
 }
