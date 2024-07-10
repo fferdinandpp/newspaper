@@ -16,7 +16,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        // Return view for creating category (if using views)
+        // return view('categories.create');
     }
 
     public function store(Request $request)
@@ -34,33 +34,33 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
-    public function edit($id)
+    public function edit($slug)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::where('slug', $slug)->firstOrFail();
 
         return response()->json($category);
     }
 
     public function update(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::where('id_category', $id)
+                            ->orWhere('slug', $id)
+                            ->firstOrFail();
 
         $request->validate([
             'category' => 'required|max:255',
-            'slug' => 'required|max:255|unique:categories,slug,' . $category->id,
         ]);
 
         $category->update([
             'category' => $request->category,
-            'slug' => $request->slug,
         ]);
 
         return response()->json($category, 200);
     }
 
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::where('slug', $slug)->firstOrFail();
         $category->delete();
 
         return response()->json(null, 204);

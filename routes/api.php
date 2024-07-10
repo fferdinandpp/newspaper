@@ -1,14 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsesController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,37 +20,38 @@ use App\Http\Controllers\CommentController;
 |
 */
 
-// Public routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-// Authenticated routes for users
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //Admin
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/dashboard/news', [NewsesController::class, 'index']);
+        Route::get('/dashboard/news/create', [NewsesController::class, 'create']);
+        Route::post('/dashboard/news', [NewsesController::class, 'store']);
+        Route::get('/dashboard/news/{slug}', [NewsesController::class, 'edit']);
+        Route::put('/dashboard/news/{slug}', [NewsesController::class, 'update']);
+        Route::delete('/dashboard/news/{slug}', [NewsesController::class, 'destroy']);
+        Route::get('/dashboard/categories', [CategoryController::class, 'index']);
+        Route::get('/dashboard/categories/create', [CategoryController::class, 'create']);
+        Route::post('/dashboard/categories', [CategoryController::class, 'store']);
+        Route::get('/dashboard/categories/{slug}', [CategoryController::class, 'edit']);
+        Route::put('/dashboard/categories/{slug}', [CategoryController::class, 'update']);
+        Route::delete('/dashboard/categories/{slug}', [CategoryController::class, 'destroy']);
+        Route::get('/dashboard/users', [UserController::class, 'index']);
+        Route::delete('/dashboard/users/{id}', [UserController::class, 'destroy']);
+        Route::get('/dashboard/comments', [CommentsController::class, 'index']);
+        Route::delete('/dashboard/comments/{id}', [CommentsController::class, 'destroy']);
+    });
+    
+    //User
     Route::get('/news', [HomeController::class, 'index']);
     Route::get('/news/{slug}', [HomeController::class, 'show']);
     Route::post('/comment/{news_id}', [HomeController::class, 'addComment']);
-    Route::delete('/comment/{comment_id}', [HomeController::class, 'deleteComment']);
+    Route::delete('/comment/{id}', [HomeController::class, 'deleteComment']);
 });
 
-// Authenticated routes for admins
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-    Route::get('/dashboard/news', [NewsController::class, 'index']);
-    Route::get('/dashboard/news/create', [NewsController::class, 'create']);
-    Route::post('/dashboard/news', [NewsController::class, 'store']);
-    Route::get('/dashboard/news/{id}', [NewsController::class, 'edit']);
-    Route::put('/dashboard/news/{id}', [NewsController::class, 'update']);
-    Route::delete('/dashboard/news/{id}', [NewsController::class, 'destroy']);
-    Route::get('/dashboard/categories', [CategoryController::class, 'index']);
-    Route::get('/dashboard/categories/create', [CategoryController::class, 'create']);
-    Route::post('/dashboard/categories', [CategoryController::class, 'store']);
-    Route::get('/dashboard/categories/{id}', [CategoryController::class, 'edit']);
-    Route::put('/dashboard/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/dashboard/categories/{id}', [CategoryController::class, 'destroy']);
-    Route::get('/dashboard/users', [UserController::class, 'index']);
-    Route::delete('/dashboard/users/{id}', [UserController::class, 'destroy']);
-    Route::get('/dashboard/comments', [CommentController::class, 'index']);
-    Route::delete('/dashboard/comments/{id}', [CommentController::class, 'destroy']);
-});
+// Public
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);

@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\News;
 use App\Models\Category;
-use App\Models\Comment;
+use App\Models\comments;
+use App\Models\newses;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         $totalUsers = User::count();
-        $totalNews = News::count();
+        $totalNews = newses::count();
         $totalCategories = Category::count();
-        $totalComments = Comment::count();
+        $totalComments = comments::count();
 
         return response()->json([
             'total_users' => $totalUsers,

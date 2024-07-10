@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\News;
-use App\Models\Category;
+use App\Models\newses;
 use Illuminate\Support\Str;
 
-class NewsController extends Controller
+class NewsesController extends Controller
 {
     public function index()
     {
-        $news = News::all();
+        $news = newses::all();
 
         return response()->json($news);
     }
@@ -32,7 +32,7 @@ class NewsController extends Controller
 
         $slug = Str::slug($request->title);
         
-        $news = News::create([
+        $news = newses::create([
             'title' => $request->title,
             'news' => $request->news,
             'id_category' => $request->id_category,
@@ -43,16 +43,16 @@ class NewsController extends Controller
         return response()->json($news, 201);
     }
 
-    public function edit($id)
+    public function edit($slug)
     {
-        $news = News::findOrFail($id);
+        $news = newses::where('slug', $slug)->firstOrFail();
 
         return response()->json($news);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
-        $news = News::findOrFail($id);
+        $news = newses::where('slug', $slug)->firstOrFail();
 
         $request->validate([
             'title' => 'required|max:255',
@@ -74,9 +74,9 @@ class NewsController extends Controller
         return response()->json($news, 200);
     }
 
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $news = News::findOrFail($id);
+        $news = newses::where('slug', $slug)->firstOrFail();
         $news->delete();
 
         return response()->json(null, 204);

@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Comment;
+use App\Http\Controllers\Controller;
+use App\Models\comments;
 
-class CommentController extends Controller
+class CommentsController extends Controller
 {
     public function index()
     {
-        $comments = Comment::all();
+        $comments = comments::all();
 
         return response()->json($comments);
     }
 
     public function destroy($id)
     {
-        $comment = Comment::findOrFail($id);
+        $comment = comments::findOrFail($id);
         $comment->delete();
 
         return response()->json(null, 204);

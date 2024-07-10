@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
@@ -12,9 +13,17 @@ class Category extends Model
         'category', 'slug',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($category) {
+            $category->slug = Str::slug($category->category);
+        });
+    }
+
     public function news()
     {
-        return $this->hasMany(News::class, 'id_category');
+        return $this->hasMany(newses::class, 'id_category');
     }
 }
-

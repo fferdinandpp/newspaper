@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class News extends Model
+class newses extends Model
 {
+    use HasFactory;
+
     protected $primaryKey = 'id_news';
 
     protected $fillable = [
@@ -19,7 +22,6 @@ class News extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'id_news');
+        return $this->hasMany(comments::class, 'id_news');
     }
 }
-
