@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -23,12 +24,20 @@ class CategoryController extends Controller
     {
         $request->validate([
             'category' => 'required|max:255',
-            'slug' => 'required|max:255|unique:categories,slug',
         ]);
+
+        $slug = Str::slug($request->category);
+
+        // Check if the slug is unique, if not, append a number to make it unique
+        $originalSlug = $slug;
+        $count = 1;
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
 
         $category = Category::create([
             'category' => $request->category,
-            'slug' => $request->slug,
+            'slug' => $slug,
         ]);
 
         return response()->json($category, 201);

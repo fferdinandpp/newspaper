@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //User
     Route::get('/news', [HomeController::class, 'index']);
     Route::get('/news/{slug}', [HomeController::class, 'show']);
-    Route::post('/comment/{news_id}', [HomeController::class, 'addComment']);
+    Route::post('/comment/{slug}', [HomeController::class, 'addComment']);
     Route::delete('/comment/{id}', [HomeController::class, 'deleteComment']);
 });
 
