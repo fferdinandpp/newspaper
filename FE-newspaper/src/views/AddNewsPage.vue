@@ -63,12 +63,12 @@ const cancel = () => {
           ></textarea>
         </div>
         <div class="flex w-full justify-center my-4 gap-4">
-          <button class="border-2 border-[#000] font-bold px-4 py-2 rounded-md" @click="cancel">
+          <a href="/news" class="border-2 border-[#000] font-bold px-4 py-2 rounded-md" @click="cancel">
             Cancel
-          </button>
-          <button class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md" @click="save">
+          </a>
+          <a href="/news" class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md" @click="save">
             Save
-          </button>
+          </a>
         </div>
       </div>
     </div>

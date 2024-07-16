@@ -135,11 +135,6 @@ const deleteNews = (id) => {
     news.value.splice(index, 1)
   }
 }
-
-const editNews = (id) => {
-  // Fungsi editNews dapat ditambahkan di sini
-  alert(`Edit news with id ${id}`)
-}
 </script>
 
 <template>
@@ -183,9 +178,9 @@ const editNews = (id) => {
               <td class="py-2 px-4 border-b border-r">{{ item.slug }}</td>
               <td class="py-2 px-4 border-b border-r">{{ item.dateCreated }}</td>
               <td class="py-2 border-b flex justify-center items-center h-full">
-                <button @click="editNews(item.id)" class="text-blue-500 hover:text-blue-700">
+                <a href="/addnews" class="text-blue-500 hover:text-blue-700">
                   <Edit class="w-6 h-6" />
-                </button>
+                </a>
                 <button @click="deleteNews(item.id)" class="text-red-500 hover:text-red-700">
                   <Delete class="w-6 h-6" />
                 </button>

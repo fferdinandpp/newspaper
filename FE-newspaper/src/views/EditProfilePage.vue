@@ -14,10 +14,10 @@
                 <p class="font-bold">Email</p>
                 <input type="email" class="w-full border p-2 rounded-md" placeholder="Enter your new email">
               </div>
-              <button class="underline text-sm">Change password</button>
+              <a href="/changepassword" class="underline text-sm">Change password</a>
               <div class="flex w-full justify-center my-4 gap-4">
-                <button class="border-2 border-[#000] font-bold px-4 py-2 rounded-md">Cancel</button>
-                <button class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md">Save</button>
+                <a href="/profile" class="border-2 border-[#000] font-bold px-4 py-2 rounded-md">Cancel</a>
+                <a href="/profile" class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md">Save</a>
               </div>
             </div>
           </div>

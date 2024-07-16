@@ -11,8 +11,8 @@
                     <input type="password" class="w-full border p-2 rounded-md" placeholder="Enter your new password">
                 </div>
                 <div class="flex w-full justify-center my-4 gap-4">
-                    <button class="w-24 border-2 border-[#000] font-bold px-4 py-2 rounded-md">Cancel</button>
-                    <button class="w-24 bg-[#d80000] text-white font-bold px-4 py-2 rounded-md">Save</button>
+                    <a href="/profile" class="w-24 border-2 border-[#000] font-bold px-4 py-2 rounded-md text-center">Cancel</a>
+                    <a href="/profile" class="w-24 bg-[#d80000] text-white font-bold px-4 py-2 rounded-md text-center">Save</a>
                 </div>
             </div>
         </div>

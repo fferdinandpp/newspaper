@@ -14,31 +14,31 @@ import Comment from '../assets/comment.svg'
       <div class="flex justify-between mt-5">
         <a href="" class="flex justify-center items-center bg-slate-400 rounded-md p-4 w-56 gap-4">
           <User class="w-10 h-10" />
-          <div class="text-white">
+          <a href="/user" class="text-white">
             <p class="text-2xl font-semibold">100</p>
             <p>Total User</p>
-          </div>
+          </a>
         </a>
         <a href="" class="flex justify-center items-center bg-slate-400 rounded-md p-4 w-56 gap-4">
           <Category class="w-10 h-10" />
-          <div class="text-white">
+          <a href="/category" class="text-white">
             <p class="text-2xl font-semibold">100</p>
             <p>Total Category</p>
-          </div>
+          </a>
         </a>
         <a href="" class="flex justify-center items-center bg-slate-400 rounded-md p-4 w-56 gap-4">
           <News class="w-10 h-10" />
-          <div class="text-white">
+          <a href="/news" class="text-white">
             <p class="text-2xl font-semibold">100</p>
             <p>Total News</p>
-          </div>
+          </a>
         </a>
         <a href="" class="flex justify-center items-center bg-slate-400 rounded-md p-4 w-56 gap-4">
           <Comment class="w-10 h-10" />
-          <div class="text-white">
+          <a href="/comment" class="text-white">
             <p class="text-2xl font-semibold">100</p>
             <p>Total Comment</p>
-          </div>
+          </a>
         </a>
       </div>
     </div>

@@ -16,7 +16,7 @@
                 </div>
                 <button class="my-4 w-full p-2 rounded-md bg-[#D80000] text-white font-bold">Login</button>
                 <button class="underline text-sm">Forgot password?</button>
-                <p class="mt-2 text-sm">Don't have an account? <span class="underline cursor-pointer">Register</span></p>
+                <p class="mt-2 text-sm">Don't have an account? <a href="/register" class="underline cursor-pointer">Register</a></p>
             </div>
         </div>
     </div>

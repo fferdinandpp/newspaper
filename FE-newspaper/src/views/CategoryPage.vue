@@ -52,10 +52,6 @@ const deleteCategory = (id) => {
     categories.value.splice(index, 1)
   }
 }
-
-const editCategory = (id) => {
-  alert(`Edit category with id ${id}`)
-}
 </script>
 
 <template>
@@ -93,9 +89,9 @@ const editCategory = (id) => {
             <td class="py-2 px-4 border-b border-r">{{ category.category }}</td>
             <td class="py-2 px-4 border-b border-r">{{ category.slug }}</td>
             <td class="py-2 px-4 border-b flex space-x-2">
-              <button @click="editCategory(category.id)" class="text-blue-500 hover:text-blue-700">
+              <a href="/addcategory" class="text-blue-500 hover:text-blue-700">
                 <Edit class="w-6 h-6" />
-              </button>
+              </a>
               <button @click="deleteCategory(category.id)" class="text-red-500 hover:text-red-700">
                 <Delete class="w-6 h-6" />
               </button>

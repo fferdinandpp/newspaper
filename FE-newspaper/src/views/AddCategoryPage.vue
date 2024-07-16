@@ -12,8 +12,8 @@
                 <input type="text" class="w-2/3 border p-2 rounded-md" placeholder="Enter your new name">
               </div>
               <div class="flex w-full justify-center my-4 gap-4">
-                <button class="border-2 border-[#000] font-bold px-4 py-2 rounded-md">Cancel</button>
-                <button class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md">Save</button>
+                <a href="/category" class="border-2 border-[#000] font-bold px-4 py-2 rounded-md">Cancel</a>
+                <a href="/category" class="bg-[#d80000] text-white font-bold px-4 py-2 rounded-md">Save</a>
               </div>
             </div>
           </div>
