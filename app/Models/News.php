@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class newses extends Model
+class News extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id_news';
 
     protected $fillable = [
-        'title', 'news', 'tag', 'slug', 'id_category',
-    ];
+        'title', 'news', 'id_category', 'tag', 'slug', 'image',
+    ];    
 
     public function category()
     {
@@ -22,6 +22,6 @@ class newses extends Model
 
     public function comments()
     {
-        return $this->hasMany(comments::class, 'id_news');
+        return $this->hasMany(Comment::class, 'id_news');
     }
 }

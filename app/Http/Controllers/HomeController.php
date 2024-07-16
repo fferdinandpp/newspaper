@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\comments;
-use App\Models\newses;
+use App\Models\News;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $news = newses::all();
+        $news = News::all();
         return response()->json($news);
     }
 
     public function show($slug)
     {
-        $news = newses::where('slug', $slug)->with('comments.user')->firstOrFail();
+        $news = News::where('slug', $slug)->with('comments.user')->firstOrFail();
         return response()->json($news);
     }
 
@@ -27,9 +27,9 @@ class HomeController extends Controller
             'comment' => 'required|max:255',
         ]);
 
-        $news = newses::where('slug', $slug)->firstOrFail();
+        $news = News::where('slug', $slug)->firstOrFail();
 
-        $comment = comments::create([
+        $comment = Comment::create([
             'comment' => $request->comment,
             'id_news' => $news->id_news,
             'id_user' => Auth::id(),
@@ -40,7 +40,7 @@ class HomeController extends Controller
 
     public function deleteComment($id)
     {
-        $comment = comments::findOrFail($id);
+        $comment = Comment::findOrFail($id);
 
         if ($comment->id_user === auth()->id() || auth()->user()->role === 'admin') {
             $comment->delete();

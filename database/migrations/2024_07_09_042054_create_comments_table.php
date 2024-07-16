@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key constraints
-            $table->foreign('id_news')->references('id_news')->on('newses');
+            $table->foreign('id_news')->references('id_news')->on('news');
             $table->foreign('id_user')->references('id_user')->on('users');
         });
     }

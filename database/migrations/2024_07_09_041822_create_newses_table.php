@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('newses', function (Blueprint $table) {
+        Schema::create('news', function (Blueprint $table) {
             $table->id('id_news');
             $table->string('title', 255);
             $table->string('news', 255);
             $table->unsignedBigInteger('id_category');
             $table->string('tag', 255);
             $table->string('slug', 255);
+            $table->string('image')->nullable();
             $table->timestamps();
 
             // Foreign key constraint
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('newses');
+        Schema::dropIfExists('news');
     }
 };
