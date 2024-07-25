@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
     public function index()
     {
-        $comments = Comment::all();
-
+        $comments = Comment::with(['news', 'user'])->get();
         return response()->json($comments);
     }
 
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        $comment = Comment::findOrFail($id);
         $comment->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Comment deleted successfully']);
     }
 }

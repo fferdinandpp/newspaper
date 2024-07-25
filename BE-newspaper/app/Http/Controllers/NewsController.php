@@ -1,116 +1,79 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\News;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
     public function index()
     {
-        $news = News::all();
-
+        $news = News::with('category')->get();
         return response()->json($news);
-    }
-
-    public function create()
-    {
-        // Return view for creating news (if using views)
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|max:255',
-            'news' => 'required',
-            'id_category' => 'required|exists:categories,id_category',
-            'tag' => 'required|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'title' => 'required|string|max:255',
+            'news' => 'required|string',
+            'image' => 'nullable|image|max:2048',
+            'tag' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        $slug = Str::slug($request->title);
-        $imagePath = null;
+        $newsData = $request->only(['title', 'news', 'tag', 'category_id']);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('news_images', 'public');
+            // Store the image
+            $imagePath = $request->file('image')->store('news_images');
+            $newsData['image'] = $imagePath;
         }
 
-        $news = News::create([
-            'title' => $request->title,
-            'news' => $request->news,
-            'id_category' => $request->id_category,
-            'tag' => $request->tag,
-            'slug' => $slug,
-            'image' => $imagePath,
-        ]);
+        $news = News::create($newsData);
 
-        return response()->json($news, 201);
+        return response()->json(['message' => 'News created successfully', 'news' => $news]);
     }
 
-    public function edit($slug)
+    public function update(Request $request, News $news)
     {
-        $news = News::where('slug', $slug)->firstOrFail();
-
-        return response()->json($news);
-    }
-
-    public function update(Request $request, $slug)
-    {
-        Log::info('Update method called with slug: ' . $slug);
-        // Find the news item by slug
-        $news = News::where('slug', $slug)->firstOrFail();
-    
-        // Validate the incoming request
         $request->validate([
-            'title' => 'required|max:255',
-            'news' => 'required',
-            'id_category' => 'required|exists:categories,id_category',
-            'tag' => 'required|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'title' => 'required|string|max:255',
+            'news' => 'required|string',
+            'image' => 'nullable|image|max:2048',
+            'tag' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
-    
-        // Update title, news, id_category, and tag
-        $news->title = $request->title;
-        $news->news = $request->news;
-        $news->id_category = $request->id_category;
-        $news->tag = $request->tag;
-    
-        // Handle image upload if a new image is provided
+
+        $newsData = $request->only(['title', 'news', 'tag', 'category_id']);
+
         if ($request->hasFile('image')) {
-            // Delete old image if it exists
+            // Remove the old image if exists
             if ($news->image) {
-                Storage::disk('public')->delete($news->image);
+                Storage::delete($news->image);
             }
-    
-            // Store the new image and update the path
-            $imagePath = $request->file('image')->store('news_images', 'public');
-            $news->image = $imagePath; // Update image path
+
+            // Store the new image
+            $imagePath = $request->file('image')->store('news_images');
+            $newsData['image'] = $imagePath;
         }
-    
-        // Update slug based on title
-        $news->slug = Str::slug($request->title); 
-    
-        // Save the changes
-        $news->save();
-    
-        // Return the updated news item
-        return response()->json($news, 200);
-    }    
 
-    public function destroy($slug)
+        $news->update($newsData);
+
+        return response()->json(['message' => 'News updated successfully', 'news' => $news]);
+    }
+
+    public function destroy(News $news)
     {
-        $news = News::where('slug', $slug)->firstOrFail();
-
+        // Remove the image if exists
         if ($news->image) {
-            Storage::disk('public')->delete($news->image);
+            Storage::delete($news->image);
         }
 
         $news->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'News deleted successfully']);
     }
 }

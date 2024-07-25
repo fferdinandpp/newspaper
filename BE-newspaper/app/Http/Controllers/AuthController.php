@@ -2,65 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * Register a new user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:50',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'image' => 'nullable|image|max:2048', // Optional image upload
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return response()->json($user, 201);
+        $userData = $request->only('name', 'email', 'password');
+        $userData['password'] = Hash::make($request->password);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('user_images');
+            $userData['image'] = $imagePath;
+        }
+
+        $user = User::create($userData);
+
+        return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
     }
 
+    /**
+     * Log in an existing user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $credentials = $request->only('email', 'password');
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $token = $user->createToken('Personal Access Token')->plainTextToken;
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            'message' => 'Login successful',
+            'user' => $user,
+            'token' => $token
         ]);
-    }
-
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
-    }
-
-    public function logout(Request $request)
-    {
-        $user = $request->user();
-        
-        if ($user) {
-            $user->currentAccessToken()->delete();
-        } else {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-
-        return response()->json(['message' => 'Logged out successfully']);
     }
 }

@@ -9,19 +9,30 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_comment';
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'comment', 'id_news', 'id_user',
+        'comment',
+        'news_id',
+        'user_id',
     ];
 
+    /**
+     * Get the news that owns the comment.
+     */
     public function news()
     {
-        return $this->belongsTo(News::class, 'id_news');
+        return $this->belongsTo(News::class);
     }
 
+    /**
+     * Get the user that owns the comment.
+     */
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->belongsTo(User::class);
     }
 }

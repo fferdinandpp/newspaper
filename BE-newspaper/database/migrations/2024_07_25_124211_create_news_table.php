@@ -12,17 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('news', function (Blueprint $table) {
-            $table->id('id_news');
+            $table->id();
             $table->string('title', 255);
             $table->string('news', 255);
-            $table->unsignedBigInteger('id_category');
-            $table->string('tag', 255);
-            $table->string('slug', 255);
             $table->string('image')->nullable();
+            $table->string('tag', 255);
+            $table->string('slug', 255)->unique();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_category')->references('id_category')->on('categories');
         });
     }
 

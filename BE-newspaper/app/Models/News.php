@@ -4,24 +4,52 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class News extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_news';
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'title', 'news', 'id_category', 'tag', 'slug', 'image',
-    ];    
+        'title',
+        'news',
+        'image',
+        'tag',
+        'category_id',
+    ];
 
-    public function category()
+    public static function boot()
     {
-        return $this->belongsTo(Category::class, 'id_category');
+        parent::boot();
+
+        static::creating(function ($news) {
+            $news->slug = Str::slug($news->title);
+        });
+
+        static::updating(function ($news) {
+            $news->slug = Str::slug($news->title);
+        });
     }
 
-    public function comments()
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected $casts = [
+        // No casting required for this model
+    ];
+
+    /**
+     * Get the category that owns the news.
+     */
+    public function category()
     {
-        return $this->hasMany(Comment::class, 'id_news');
+        return $this->belongsTo(Category::class);
     }
 }

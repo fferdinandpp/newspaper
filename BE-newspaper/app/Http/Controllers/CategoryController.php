@@ -1,77 +1,44 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Category::all();
-
         return response()->json($categories);
-    }
-
-    public function create()
-    {
-        // return view('categories.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'category' => 'required|max:255',
+            'category' => 'required|string|max:255',
         ]);
 
-        $slug = Str::slug($request->category);
+        $category = Category::create($request->all());
 
-        // Check if the slug is unique, if not, append a number to make it unique
-        $originalSlug = $slug;
-        $count = 1;
-        while (Category::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
-        }
-
-        $category = Category::create([
-            'category' => $request->category,
-            'slug' => $slug,
-        ]);
-
-        return response()->json($category, 201);
+        return response()->json(['message' => 'Category created successfully', 'category' => $category]);
     }
 
-    public function edit($slug)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
-
-        return response()->json($category);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $category = Category::where('id_category', $id)
-                            ->orWhere('slug', $id)
-                            ->firstOrFail();
-
         $request->validate([
-            'category' => 'required|max:255',
+            'category' => 'required|string|max:255',
         ]);
 
-        $category->update([
-            'category' => $request->category,
-        ]);
+        $category->update($request->all());
 
-        return response()->json($category, 200);
+        return response()->json(['message' => 'Category updated successfully', 'category' => $category]);
     }
 
-    public function destroy($slug)
+    public function destroy(Category $category)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
         $category->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Category deleted successfully']);
     }
 }

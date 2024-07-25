@@ -1,26 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Category;
-use App\Models\Comment;
 use App\Models\News;
+use App\Models\Comment;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::count();
-        $totalNews = News::count();
-        $totalCategories = Category::count();
-        $totalComments = Comment::count();
+        $userCount = User::count();
+        $categoryCount = Category::count();
+        $newsCount = News::count();
+        $commentCount = Comment::count();
 
         return response()->json([
-            'total_users' => $totalUsers,
-            'total_news' => $totalNews,
-            'total_categories' => $totalCategories,
-            'total_comments' => $totalComments,
+            'user_count' => $userCount,
+            'category_count' => $categoryCount,
+            'news_count' => $newsCount,
+            'comment_count' => $commentCount
         ]);
     }
 }
